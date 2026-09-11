@@ -58,11 +58,51 @@ body {
 .subtitle {
   color: #a855a8;
   font-size: 1rem;
-  margin-bottom: 35px;
+  margin-bottom: 25px;
   font-weight: 500;
   line-height: 1.6;
 }
 
+/* ===== TOMBOL MUSIK ===== */
+.music-btn {
+  background: rgba(255, 255, 255, 0.9);
+  color: #ff4d94;
+  border: 2px solid #ff4d94;
+  padding: 12px 28px;
+  border-radius: 50px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 25px;
+  letter-spacing: 0.5px;
+}
+
+.music-btn:hover {
+  background: #ff4d94;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(255, 77, 148, 0.4);
+}
+
+.music-btn .music-icon {
+  font-size: 1.1rem;
+  display: inline-block;
+}
+
+.music-btn.playing .music-icon {
+  animation: musicPulse 1s infinite;
+}
+
+@keyframes musicPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+}
+
+/* ===== TOMBOL PENCET ===== */
 .btn-pencet {
   background: linear-gradient(135deg, #ff4d94, #b966ff);
   color: white;
@@ -160,54 +200,16 @@ body {
   100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
 }
 
-/* Tombol kontrol musik (muncul setelah lagu play) */
-.music-control {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #ff4d94, #b966ff);
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-size: 1.3rem;
-  box-shadow: 0 10px 30px rgba(255, 77, 148, 0.5);
-  z-index: 50;
-  transition: all 0.3s ease;
-  display: none;
-  align-items: center;
-  justify-content: center;
-}
-
-.music-control.show {
-  display: flex;
-}
-
-.music-control:hover {
-  transform: scale(1.1);
-}
-
-.music-control.playing {
-  animation: spin 3s linear infinite;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
 @media (max-width: 600px) {
   .card { padding: 35px 25px; border-radius: 25px; }
   .title { font-size: 1.5rem; }
-  .subtitle { font-size: 0.9rem; margin-bottom: 25px; }
+  .subtitle { font-size: 0.9rem; margin-bottom: 20px; }
+  .music-btn { padding: 10px 22px; font-size: 0.85rem; margin-bottom: 20px; }
   .btn-pencet { padding: 15px 35px; font-size: 1rem; }
   .ucapan { font-size: 1rem; }
   .foto-container img, .foto-placeholder { width: 100%; }
   .foto-placeholder { height: 280px; font-size: 3rem; }
   .heart-bg { font-size: 15px; }
-  .music-control { width: 45px; height: 45px; font-size: 1.1rem; }
 }
 </style>
 </head>
@@ -219,6 +221,14 @@ body {
     Ada sesuatu nih buat kamu...<br>
     Pencet tombol di bawah ya!
   </p>
+
+  <!-- TOMBOL PLAY MUSIK (selalu keliatan) -->
+  <button class="music-btn" id="musicBtn">
+    <span class="music-icon">▶</span>
+    <span id="musicText">Putar Musik</span>
+  </button>
+
+  <br>
 
   <button class="btn-pencet" id="btnPencet">Pencet Aku</button>
 
@@ -232,9 +242,6 @@ body {
     </div>
   </div>
 </div>
-
-<!-- Tombol kontrol musik (pojok kanan bawah) -->
-<button class="music-control" id="musicControl" title="Play/Pause musik">▶</button>
 
 <!-- AUDIO PLAYER — Ganti src dengan file lagu kamu -->
 <audio id="bgMusic" loop preload="auto">
@@ -255,9 +262,40 @@ var btn = document.getElementById('btnPencet');
 var surpriseBox = document.getElementById('surpriseBox');
 var ucapanText = document.getElementById('ucapanText');
 var bgMusic = document.getElementById('bgMusic');
-var musicControl = document.getElementById('musicControl');
+var musicBtn = document.getElementById('musicBtn');
+var musicText = document.getElementById('musicText');
+var musicIcon = musicBtn.querySelector('.music-icon');
 var isPlaying = false;
 
+// ===== TOMBOL MUSIK (Play/Pause) =====
+musicBtn.addEventListener('click', function() {
+  if (isPlaying) {
+    // Pause musik
+    bgMusic.pause();
+    isPlaying = false;
+    musicBtn.classList.remove('playing');
+    musicIcon.textContent = '▶';
+    musicText.textContent = 'Putar Musik';
+  } else {
+    // Play musik
+    bgMusic.volume = 0.5; // Volume 0-1 (0.5 = 50%)
+    var playPromise = bgMusic.play();
+
+    if (playPromise !== undefined) {
+      playPromise.then(function() {
+        isPlaying = true;
+        musicBtn.classList.add('playing');
+        musicIcon.textContent = '❚❚'; // pause icon
+        musicText.textContent = 'Jeda Musik';
+      }).catch(function(error) {
+        console.log('Gagal play musik:', error);
+        alert('Musik gagal diputar. Cek koneksi atau file lagu ya!');
+      });
+    }
+  }
+});
+
+// ===== TOMBOL PENCET (Surprise) =====
 btn.addEventListener('click', function() {
   // Tampilin ucapan + foto
   ucapanText.innerHTML = ucapan;
@@ -268,8 +306,21 @@ btn.addEventListener('click', function() {
     btn.style.display = 'none';
   }, 400);
 
-  // Play musik
-  playMusic();
+  // Auto-play musik kalau belum jalan
+  if (!isPlaying) {
+    bgMusic.volume = 0.5;
+    var playPromise = bgMusic.play();
+    if (playPromise !== undefined) {
+      playPromise.then(function() {
+        isPlaying = true;
+        musicBtn.classList.add('playing');
+        musicIcon.textContent = '❚❚';
+        musicText.textContent = 'Jeda Musik';
+      }).catch(function(error) {
+        console.log('Autoplay gagal:', error);
+      });
+    }
+  }
 
   showBigHeart();
   setTimeout(heartBurst, 300);
@@ -277,41 +328,6 @@ btn.addEventListener('click', function() {
   setTimeout(function() {
     surpriseBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, 500);
-});
-
-// Fungsi play musik
-function playMusic() {
-  bgMusic.volume = 0.5; // Volume 0-1 (0.5 = 50%)
-  var playPromise = bgMusic.play();
-
-  if (playPromise !== undefined) {
-    playPromise.then(function() {
-      // Musik berhasil play
-      isPlaying = true;
-      musicControl.classList.add('show', 'playing');
-      musicControl.textContent = '♪';
-    }).catch(function(error) {
-      // Musik gagal play (browser blokir atau file gak ada)
-      console.log('Musik gagal diputar:', error);
-      musicControl.classList.add('show');
-      musicControl.textContent = '♪';
-    });
-  }
-}
-
-// Toggle play/pause saat tombol kontrol diklik
-musicControl.addEventListener('click', function() {
-  if (isPlaying) {
-    bgMusic.pause();
-    isPlaying = false;
-    musicControl.classList.remove('playing');
-    musicControl.textContent = '▶';
-  } else {
-    bgMusic.play();
-    isPlaying = true;
-    musicControl.classList.add('playing');
-    musicControl.textContent = '♪';
-  }
 });
 
 function showBigHeart() {
