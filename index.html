@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Untuk Kamu</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ffe0ef 0%, #f8d5ff 50%, #e0d5ff 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+  padding: 20px;
+  position: relative;
+}
+
+.heart-bg {
+  position: fixed;
+  top: -50px;
+  font-size: 20px;
+  opacity: 0.4;
+  animation: fall linear infinite;
+  pointer-events: none;
+  z-index: 1;
+  user-select: none;
+}
+
+@keyframes fall {
+  0% { transform: translateY(-100px) rotate(0deg); opacity: 0.6; }
+  100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 30px;
+  padding: 50px 40px;
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(255, 105, 180, 0.3);
+  position: relative;
+  z-index: 10;
+  border: 2px solid rgba(255, 182, 220, 0.5);
+}
+
+.title {
+  font-size: 2rem;
+  color: #ff4d94;
+  font-weight: 800;
+  margin-bottom: 15px;
+  line-height: 1.3;
+}
+
+.subtitle {
+  color: #a855a8;
+  font-size: 1rem;
+  margin-bottom: 35px;
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+.btn-pencet {
+  background: linear-gradient(135deg, #ff4d94, #b966ff);
+  color: white;
+  border: none;
+  padding: 18px 45px;
+  border-radius: 50px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(255, 77, 148, 0.4);
+  letter-spacing: 0.5px;
+}
+
+.btn-pencet:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 15px 40px rgba(255, 77, 148, 0.6);
+}
+
+.surprise-box {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 1s ease, opacity 1s ease, margin-top 1s ease;
+  opacity: 0;
+  margin-top: 0;
+}
+
+.surprise-box.show {
+  max-height: 1500px;
+  opacity: 1;
+  margin-top: 40px;
+}
+
+.ucapan {
+  font-size: 1.15rem;
+  color: #6b3a8f;
+  line-height: 1.8;
+  margin-bottom: 30px;
+  font-weight: 500;
+  padding: 0 10px;
+}
+
+.ucapan strong {
+  color: #ff4d94;
+  font-weight: 800;
+}
+
+.foto-container {
+  position: relative;
+  display: inline-block;
+  border-radius: 20px;
+  padding: 8px;
+  background: linear-gradient(135deg, #ff4d94, #b966ff);
+  box-shadow: 0 20px 50px rgba(255, 77, 148, 0.4);
+  max-width: 100%;
+}
+
+.foto-container img {
+  max-width: 100%;
+  width: 400px;
+  height: auto;
+  border-radius: 15px;
+  display: block;
+  object-fit: cover;
+}
+
+.foto-placeholder {
+  width: 400px;
+  max-width: 100%;
+  height: 400px;
+  background: linear-gradient(135deg, #ffc2dd, #d5b8ff);
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 4rem;
+  font-weight: bold;
+}
+
+.big-heart {
+  position: fixed;
+  font-size: 100px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  pointer-events: none;
+  z-index: 100;
+  animation: heartPop 1.5s ease;
+}
+
+@keyframes heartPop {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+  50% { transform: translate(-50%, -50%) scale(1.5); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+}
+
+@media (max-width: 600px) {
+  .card { padding: 35px 25px; border-radius: 25px; }
+  .title { font-size: 1.5rem; }
+  .subtitle { font-size: 0.9rem; margin-bottom: 25px; }
+  .btn-pencet { padding: 15px 35px; font-size: 1rem; }
+  .ucapan { font-size: 1rem; }
+  .foto-container img, .foto-placeholder { width: 100%; }
+  .foto-placeholder { height: 280px; font-size: 3rem; }
+  .heart-bg { font-size: 15px; }
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1 class="title">Hai Sayang</h1>
+  <p class="subtitle">
+    Ada sesuatu nih buat kamu...<br>
+    Pencet tombol di bawah ya!
+  </p>
+
+  <button class="btn-pencet" id="btnPencet">Pencet Aku</button>
+
+  <div class="surprise-box" id="surpriseBox">
+    <p class="ucapan" id="ucapanText"></p>
+
+    <div class="foto-container">
+      <img src="foto-cewek.jpg" alt="Foto Spesial" id="fotoCewek"
+           onerror="this.style.display='none'; document.getElementById('fotoPlaceholder').style.display='flex';">
+      <div class="foto-placeholder" id="fotoPlaceholder" style="display:none;">FOTO</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// EDIT UCAPAN DI SINI
+// ============================================================
+var ucapan = "Hai sayang...<br><br>Makasih ya udah jadi bagian terindah di hidup aku.<br>Setiap hari sama kamu itu kayak mimpi yang jadi nyata.<br>Aku sayang kamu, hari ini, besok, dan selamanya.<br><br><strong>I Love You</strong>";
+
+// ============================================================
+// JANGAN EDIT DI BAWAH INI
+// ============================================================
+
+var btn = document.getElementById('btnPencet');
+var surpriseBox = document.getElementById('surpriseBox');
+var ucapanText = document.getElementById('ucapanText');
+
+btn.addEventListener('click', function() {
+  ucapanText.innerHTML = ucapan;
+  surpriseBox.classList.add('show');
+  btn.style.opacity = '0';
+  btn.style.transform = 'scale(0.8)';
+  setTimeout(function() {
+    btn.style.display = 'none';
+  }, 400);
+
+  showBigHeart();
+  setTimeout(heartBurst, 300);
+
+  setTimeout(function() {
+    surpriseBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 500);
+});
+
+function showBigHeart() {
+  var heart = document.createElement('div');
+  heart.className = 'big-heart';
+  heart.textContent = '❤';
+  heart.style.color = '#ff4d94';
+  document.body.appendChild(heart);
+  setTimeout(function() { heart.remove(); }, 1500);
+}
+
+function heartBurst() {
+  var hearts = ['❤', '♥', '♡', '✿', '✧', '★'];
+  for (var i = 0; i < 30; i++) {
+    var h = document.createElement('div');
+    h.className = 'heart-bg';
+    h.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+    h.style.left = Math.random() * 100 + 'vw';
+    h.style.fontSize = (15 + Math.random() * 20) + 'px';
+    h.style.animationDuration = (3 + Math.random() * 3) + 's';
+    h.style.animationDelay = Math.random() * 1 + 's';
+    h.style.color = '#ff4d94';
+    document.body.appendChild(h);
+    setTimeout(function(el) {
+      return function() { el.remove(); };
+    }(h), 6000);
+  }
+}
+
+function createBgHeart() {
+  var hearts = ['❤', '♥', '♡', '✿', '✧', '★'];
+  var h = document.createElement('div');
+  h.className = 'heart-bg';
+  h.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+  h.style.left = Math.random() * 100 + 'vw';
+  h.style.fontSize = (12 + Math.random() * 15) + 'px';
+  h.style.animationDuration = (5 + Math.random() * 5) + 's';
+  h.style.color = '#ff4d94';
+  document.body.appendChild(h);
+  setTimeout(function() { h.remove(); }, 10000);
+}
+
+setInterval(createBgHeart, 400);
+for (var i = 0; i < 8; i++) {
+  setTimeout(createBgHeart, i * 200);
+}
+</script>
+
+</body>
+</html>
