@@ -160,6 +160,44 @@ body {
   100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
 }
 
+/* Tombol kontrol musik (muncul setelah lagu play) */
+.music-control {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff4d94, #b966ff);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1.3rem;
+  box-shadow: 0 10px 30px rgba(255, 77, 148, 0.5);
+  z-index: 50;
+  transition: all 0.3s ease;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.music-control.show {
+  display: flex;
+}
+
+.music-control:hover {
+  transform: scale(1.1);
+}
+
+.music-control.playing {
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 @media (max-width: 600px) {
   .card { padding: 35px 25px; border-radius: 25px; }
   .title { font-size: 1.5rem; }
@@ -169,6 +207,7 @@ body {
   .foto-container img, .foto-placeholder { width: 100%; }
   .foto-placeholder { height: 280px; font-size: 3rem; }
   .heart-bg { font-size: 15px; }
+  .music-control { width: 45px; height: 45px; font-size: 1.1rem; }
 }
 </style>
 </head>
@@ -194,6 +233,14 @@ body {
   </div>
 </div>
 
+<!-- Tombol kontrol musik (pojok kanan bawah) -->
+<button class="music-control" id="musicControl" title="Play/Pause musik">▶</button>
+
+<!-- AUDIO PLAYER — Ganti src dengan file lagu kamu -->
+<audio id="bgMusic" loop preload="auto">
+  <source src="lagu-romantis.mp3" type="audio/mpeg">
+</audio>
+
 <script>
 // ============================================================
 // EDIT UCAPAN DI SINI
@@ -207,8 +254,12 @@ var ucapan = "Hai sayang...<br><br>Makasih ya udah jadi bagian terindah di hidup
 var btn = document.getElementById('btnPencet');
 var surpriseBox = document.getElementById('surpriseBox');
 var ucapanText = document.getElementById('ucapanText');
+var bgMusic = document.getElementById('bgMusic');
+var musicControl = document.getElementById('musicControl');
+var isPlaying = false;
 
 btn.addEventListener('click', function() {
+  // Tampilin ucapan + foto
   ucapanText.innerHTML = ucapan;
   surpriseBox.classList.add('show');
   btn.style.opacity = '0';
@@ -217,12 +268,50 @@ btn.addEventListener('click', function() {
     btn.style.display = 'none';
   }, 400);
 
+  // Play musik
+  playMusic();
+
   showBigHeart();
   setTimeout(heartBurst, 300);
 
   setTimeout(function() {
     surpriseBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, 500);
+});
+
+// Fungsi play musik
+function playMusic() {
+  bgMusic.volume = 0.5; // Volume 0-1 (0.5 = 50%)
+  var playPromise = bgMusic.play();
+
+  if (playPromise !== undefined) {
+    playPromise.then(function() {
+      // Musik berhasil play
+      isPlaying = true;
+      musicControl.classList.add('show', 'playing');
+      musicControl.textContent = '♪';
+    }).catch(function(error) {
+      // Musik gagal play (browser blokir atau file gak ada)
+      console.log('Musik gagal diputar:', error);
+      musicControl.classList.add('show');
+      musicControl.textContent = '♪';
+    });
+  }
+}
+
+// Toggle play/pause saat tombol kontrol diklik
+musicControl.addEventListener('click', function() {
+  if (isPlaying) {
+    bgMusic.pause();
+    isPlaying = false;
+    musicControl.classList.remove('playing');
+    musicControl.textContent = '▶';
+  } else {
+    bgMusic.play();
+    isPlaying = true;
+    musicControl.classList.add('playing');
+    musicControl.textContent = '♪';
+  }
 });
 
 function showBigHeart() {
