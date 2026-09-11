@@ -38,7 +38,7 @@ body {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 30px;
   padding: 50px 40px;
-  max-width: 600px;
+  max-width: 700px;
   width: 100%;
   text-align: center;
   box-shadow: 0 20px 60px rgba(255, 105, 180, 0.3);
@@ -63,7 +63,7 @@ body {
   line-height: 1.6;
 }
 
-/* ===== TOMBOL MUSIK ===== */
+/* Tombol musik */
 .music-btn {
   background: rgba(255, 255, 255, 0.9);
   color: #ff4d94;
@@ -88,11 +88,6 @@ body {
   box-shadow: 0 10px 25px rgba(255, 77, 148, 0.4);
 }
 
-.music-btn .music-icon {
-  font-size: 1.1rem;
-  display: inline-block;
-}
-
 .music-btn.playing .music-icon {
   animation: musicPulse 1s infinite;
 }
@@ -102,7 +97,7 @@ body {
   50% { transform: scale(1.3); }
 }
 
-/* ===== TOMBOL PENCET ===== */
+/* Tombol pencet */
 .btn-pencet {
   background: linear-gradient(135deg, #ff4d94, #b966ff);
   color: white;
@@ -125,13 +120,13 @@ body {
 .surprise-box {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 1s ease, opacity 1s ease, margin-top 1s ease;
+  transition: max-height 1.2s ease, opacity 1s ease, margin-top 1s ease;
   opacity: 0;
   margin-top: 0;
 }
 
 .surprise-box.show {
-  max-height: 1500px;
+  max-height: 2000px;
   opacity: 1;
   margin-top: 40px;
 }
@@ -150,37 +145,168 @@ body {
   font-weight: 800;
 }
 
-.foto-container {
+/* ===== SLIDESHOW ===== */
+.slideshow-container {
   position: relative;
-  display: inline-block;
+  max-width: 100%;
+  width: 500px;
+  margin: 0 auto;
   border-radius: 20px;
-  padding: 8px;
-  background: linear-gradient(135deg, #ff4d94, #b966ff);
+  overflow: hidden;
+  background: #ffd6e8;
   box-shadow: 0 20px 50px rgba(255, 77, 148, 0.4);
-  max-width: 100%;
+  border: 4px solid transparent;
+  background-clip: padding-box;
+  position: relative;
 }
 
-.foto-container img {
-  max-width: 100%;
-  width: 400px;
-  height: auto;
-  border-radius: 15px;
+.slideshow-container::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 24px;
+  padding: 4px;
+  background: linear-gradient(135deg, #ff4d94, #b966ff);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.slide {
+  display: none;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  position: relative;
+  background: #ffd6e8;
+}
+
+.slide.active {
   display: block;
-  object-fit: cover;
+  animation: slideFade 0.6s ease;
 }
 
-.foto-placeholder {
-  width: 400px;
-  max-width: 100%;
-  height: 400px;
-  background: linear-gradient(135deg, #ffc2dd, #d5b8ff);
-  border-radius: 15px;
+@keyframes slideFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.slide img,
+.slide video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Caption di bawah foto */
+.slide-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  color: white;
+  padding: 30px 20px 15px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: left;
+  pointer-events: none;
+}
+
+/* ===== NAVIGASI PANAH ===== */
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.85);
+  color: #ff4d94;
+  border: none;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.5rem;
+  font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.3s;
+  z-index: 10;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+.nav-btn:hover {
+  background: #ff4d94;
   color: white;
-  font-size: 4rem;
-  font-weight: bold;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.nav-btn.prev {
+  left: 15px;
+}
+
+.nav-btn.next {
+  right: 15px;
+}
+
+/* ===== DOT INDICATOR ===== */
+.dots-container {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+  background: rgba(0,0,0,0.3);
+  padding: 8px 14px;
+  border-radius: 50px;
+  backdrop-filter: blur(5px);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+  padding: 0;
+}
+
+.dot.active {
+  background: #ff4d94;
+  width: 28px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px #ff4d94;
+}
+
+/* ===== VIDEO PLAY OVERLAY ===== */
+.video-slide {
+  position: relative;
+}
+
+.video-slide video {
+  cursor: pointer;
+}
+
+.video-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #ff4d94;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  z-index: 5;
 }
 
 .big-heart {
@@ -201,15 +327,21 @@ body {
 }
 
 @media (max-width: 600px) {
-  .card { padding: 35px 25px; border-radius: 25px; }
+  .card { padding: 35px 20px; border-radius: 25px; }
   .title { font-size: 1.5rem; }
   .subtitle { font-size: 0.9rem; margin-bottom: 20px; }
   .music-btn { padding: 10px 22px; font-size: 0.85rem; margin-bottom: 20px; }
   .btn-pencet { padding: 15px 35px; font-size: 1rem; }
   .ucapan { font-size: 1rem; }
-  .foto-container img, .foto-placeholder { width: 100%; }
-  .foto-placeholder { height: 280px; font-size: 3rem; }
   .heart-bg { font-size: 15px; }
+  .slideshow-container { width: 100%; }
+  .nav-btn { width: 38px; height: 38px; font-size: 1.2rem; }
+  .nav-btn.prev { left: 8px; }
+  .nav-btn.next { right: 8px; }
+  .slide-caption { font-size: 0.85rem; padding: 25px 15px 12px; }
+  .dots-container { padding: 6px 10px; }
+  .dot { width: 8px; height: 8px; }
+  .dot.active { width: 22px; }
 }
 </style>
 </head>
@@ -222,7 +354,6 @@ body {
     Pencet tombol di bawah ya!
   </p>
 
-  <!-- TOMBOL PLAY MUSIK (selalu keliatan) -->
   <button class="music-btn" id="musicBtn">
     <span class="music-icon">▶</span>
     <span id="musicText">Putar Musik</span>
@@ -235,15 +366,66 @@ body {
   <div class="surprise-box" id="surpriseBox">
     <p class="ucapan" id="ucapanText"></p>
 
-    <div class="foto-container">
-      <img src="foto-cewek.jpg" alt="Foto Spesial" id="fotoCewek"
-           onerror="this.style.display='none'; document.getElementById('fotoPlaceholder').style.display='flex';">
-      <div class="foto-placeholder" id="fotoPlaceholder" style="display:none;">FOTO</div>
+    <!-- ===== SLIDESHOW ===== -->
+    <div class="slideshow-container" id="slideshow">
+
+      <!-- Slide 1: FOTO -->
+      <div class="slide active">
+        <img src="foto1.jpg" alt="Kenangan 1"
+             onerror="this.parentElement.innerHTML='<div style=&quot;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ffc2dd,#d5b8ff);color:white;font-size:3rem;font-weight:bold;&quot;>FOTO 1</div>'">
+        <div class="slide-caption">Momen pertama kita ❤</div>
+      </div>
+
+      <!-- Slide 2: FOTO -->
+      <div class="slide">
+        <img src="foto2.jpg" alt="Kenangan 2"
+             onerror="this.parentElement.innerHTML='<div style=&quot;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ffc2dd,#d5b8ff);color:white;font-size:3rem;font-weight:bold;&quot;>FOTO 2</div>'">
+        <div class="slide-caption">Senyum manis kamu 😊</div>
+      </div>
+
+      <!-- Slide 3: FOTO -->
+      <div class="slide">
+        <img src="foto3.jpg" alt="Kenangan 3"
+             onerror="this.parentElement.innerHTML='<div style=&quot;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ffc2dd,#d5b8ff);color:white;font-size:3rem;font-weight:bold;&quot;>FOTO 3</div>'">
+        <div class="slide-caption">Selalu cantik 💕</div>
+      </div>
+
+      <!-- Slide 4: FOTO -->
+      <div class="slide">
+        <img src="foto4.jpg" alt="Kenangan 4"
+             onerror="this.parentElement.innerHTML='<div style=&quot;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ffc2dd,#d5b8ff);color:white;font-size:3rem;font-weight:bold;&quot;>FOTO 4</div>'">
+        <div class="slide-caption">Momen yang gak akan aku lupain ✨</div>
+      </div>
+
+      <!-- Slide 5: FOTO -->
+      <div class="slide">
+        <img src="foto5.jpg" alt="Kenangan 5"
+             onerror="this.parentElement.innerHTML='<div style=&quot;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ffc2dd,#d5b8ff);color:white;font-size:3rem;font-weight:bold;&quot;>FOTO 5</div>'">
+        <div class="slide-caption">Bersamamu selalu indah 💖</div>
+      </div>
+
+      <!-- Slide 6: VIDEO -->
+      <div class="slide video-slide">
+        <span class="video-badge">VIDEO</span>
+        <video controls playsinline preload="metadata">
+          <source src="video.mp4" type="video/mp4">
+          Browser kamu tidak mendukung video.
+        </video>
+        <div class="slide-caption">Video spesial buat kamu 🎬</div>
+      </div>
+
+      <!-- Tombol navigasi -->
+      <button class="nav-btn prev" id="prevBtn" aria-label="Sebelumnya">‹</button>
+      <button class="nav-btn next" id="nextBtn" aria-label="Selanjutnya">›</button>
+
+      <!-- Dot indicators -->
+      <div class="dots-container" id="dotsContainer"></div>
+
     </div>
+
   </div>
 </div>
 
-<!-- AUDIO PLAYER — Ganti src dengan file lagu kamu -->
 <audio id="bgMusic" loop preload="auto">
   <source src="lagu-romantis.mp3" type="audio/mpeg">
 </audio>
@@ -267,37 +449,32 @@ var musicText = document.getElementById('musicText');
 var musicIcon = musicBtn.querySelector('.music-icon');
 var isPlaying = false;
 
-// ===== TOMBOL MUSIK (Play/Pause) =====
+// ===== TOMBOL MUSIK =====
 musicBtn.addEventListener('click', function() {
   if (isPlaying) {
-    // Pause musik
     bgMusic.pause();
     isPlaying = false;
     musicBtn.classList.remove('playing');
     musicIcon.textContent = '▶';
     musicText.textContent = 'Putar Musik';
   } else {
-    // Play musik
-    bgMusic.volume = 0.5; // Volume 0-1 (0.5 = 50%)
+    bgMusic.volume = 0.5;
     var playPromise = bgMusic.play();
-
     if (playPromise !== undefined) {
       playPromise.then(function() {
         isPlaying = true;
         musicBtn.classList.add('playing');
-        musicIcon.textContent = '❚❚'; // pause icon
+        musicIcon.textContent = '❚❚';
         musicText.textContent = 'Jeda Musik';
       }).catch(function(error) {
         console.log('Gagal play musik:', error);
-        alert('Musik gagal diputar. Cek koneksi atau file lagu ya!');
       });
     }
   }
 });
 
-// ===== TOMBOL PENCET (Surprise) =====
+// ===== TOMBOL PENCET =====
 btn.addEventListener('click', function() {
-  // Tampilin ucapan + foto
   ucapanText.innerHTML = ucapan;
   surpriseBox.classList.add('show');
   btn.style.opacity = '0';
@@ -306,7 +483,6 @@ btn.addEventListener('click', function() {
     btn.style.display = 'none';
   }, 400);
 
-  // Auto-play musik kalau belum jalan
   if (!isPlaying) {
     bgMusic.volume = 0.5;
     var playPromise = bgMusic.play();
@@ -330,6 +506,157 @@ btn.addEventListener('click', function() {
   }, 500);
 });
 
+// ============================================================
+// SLIDESHOW LOGIC
+// ============================================================
+var slides = document.querySelectorAll('.slide');
+var prevBtn = document.getElementById('prevBtn');
+var nextBtn = document.getElementById('nextBtn');
+var dotsContainer = document.getElementById('dotsContainer');
+var currentSlide = 0;
+var autoSlideInterval;
+
+// Bikin dot indicator
+for (var i = 0; i < slides.length; i++) {
+  var dot = document.createElement('button');
+  dot.className = 'dot' + (i === 0 ? ' active' : '');
+  dot.setAttribute('aria-label', 'Slide ' + (i + 1));
+  (function(index) {
+    dot.addEventListener('click', function() {
+      goToSlide(index);
+      resetAutoSlide();
+    });
+  })(i);
+  dotsContainer.appendChild(dot);
+}
+
+var dots = document.querySelectorAll('.dot');
+
+function showSlide(n) {
+  if (n >= slides.length) currentSlide = 0;
+  else if (n < 0) currentSlide = slides.length - 1;
+  else currentSlide = n;
+
+  // Sembunyiin semua slide + pause video
+  slides.forEach(function(slide, i) {
+    slide.classList.remove('active');
+    var video = slide.querySelector('video');
+    if (video && !video.paused) {
+      video.pause();
+    }
+  });
+
+  // Tampilin slide aktif
+  slides[currentSlide].classList.add('active');
+
+  // Update dot
+  dots.forEach(function(dot, i) {
+    dot.classList.toggle('active', i === currentSlide);
+  });
+}
+
+function goToSlide(n) {
+  showSlide(n);
+}
+
+function nextSlide() {
+  showSlide(currentSlide + 1);
+}
+
+function prevSlide() {
+  showSlide(currentSlide - 1);
+}
+
+// Auto slide tiap 4 detik
+function startAutoSlide() {
+  autoSlideInterval = setInterval(function() {
+    // Skip auto-slide kalau slide yang aktif itu video yang sedang play
+    var currentSlideEl = slides[currentSlide];
+    var video = currentSlideEl.querySelector('video');
+    if (video && !video.paused) return;
+
+    nextSlide();
+  }, 4000);
+}
+
+function stopAutoSlide() {
+  clearInterval(autoSlideInterval);
+}
+
+function resetAutoSlide() {
+  stopAutoSlide();
+  startAutoSlide();
+}
+
+// Event listener tombol panah
+prevBtn.addEventListener('click', function() {
+  prevSlide();
+  resetAutoSlide();
+});
+
+nextBtn.addEventListener('click', function() {
+  nextSlide();
+  resetAutoSlide();
+});
+
+// Keyboard navigation
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowLeft') {
+    prevSlide();
+    resetAutoSlide();
+  } else if (e.key === 'ArrowRight') {
+    nextSlide();
+    resetAutoSlide();
+  }
+});
+
+// Touch swipe support (HP)
+var touchStartX = 0;
+var touchEndX = 0;
+var slideshow = document.getElementById('slideshow');
+
+slideshow.addEventListener('touchstart', function(e) {
+  touchStartX = e.changedTouches[0].screenX;
+}, { passive: true });
+
+slideshow.addEventListener('touchend', function(e) {
+  touchEndX = e.changedTouches[0].screenX;
+  handleSwipe();
+}, { passive: true });
+
+function handleSwipe() {
+  var swipeDistance = touchEndX - touchStartX;
+  if (Math.abs(swipeDistance) > 50) {
+    if (swipeDistance < 0) {
+      nextSlide();
+    } else {
+      prevSlide();
+    }
+    resetAutoSlide();
+  }
+}
+
+// Pause video lain kalau ada video yang play
+slides.forEach(function(slide) {
+  var video = slide.querySelector('video');
+  if (video) {
+    video.addEventListener('play', function() {
+      slides.forEach(function(s) {
+        var v = s.querySelector('video');
+        if (v && v !== video && !v.paused) {
+          v.pause();
+        }
+      });
+    });
+  }
+});
+
+// Mulai auto slide
+startAutoSlide();
+
+// ============================================================
+// EFEK HATI
+// ============================================================
 function showBigHeart() {
   var heart = document.createElement('div');
   heart.className = 'big-heart';
